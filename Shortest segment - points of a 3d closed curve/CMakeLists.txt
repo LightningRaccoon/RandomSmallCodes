@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.28)
+project(Shortest_segment___points_of_a_3d_closed_curve)
+
+set(CMAKE_CXX_STANDARD 20)
+
+add_executable(Shortest_segment___points_of_a_3d_closed_curve main.cpp)
