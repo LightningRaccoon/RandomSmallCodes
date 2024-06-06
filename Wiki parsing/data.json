@@ -1,0 +1,26 @@
+[
+  {
+    "flag_rules": [
+      {
+        "flag_image": "https:////upload.wikimedia.org/wikipedia/commons/thumb/9/99/F1_chequered_flag.svg/42px-F1_chequered_flag.svg.png",
+        "description": "A szabadedz\u00e9snek, az id\u0151m\u00e9r\u0151 edz\u00e9snek, vagy a versenynek v\u00e9ge van."
+      },
+      {
+        "flag_image": "https:////upload.wikimedia.org/wikipedia/commons/thumb/f/f5/F1_light_blue_flag.svg/42px-F1_light_blue_flag.svg.png",
+        "description": "Figyelmezteti a lassabb versenyz\u0151t, hogy engedje el az \u0151t lek\u00f6r\u00f6zni k\u00e9sz\u00fcl\u0151t. Ha a pil\u00f3ta h\u00e1romszor nem veszi figyelembe figyelmeztet\u00e9st, bokszutca-\u00e1thajt\u00e1sos b\u00fcntet\u00e9st kap. A bokszutca kij\u00e1rat\u00e1ban lengetve: forgalom van a p\u00e1lyaszakaszon, kihajt\u00e1sn\u00e1l legyen \u00f3vatos a versenyz\u0151."
+      },
+      {
+        "flag_image": "https:////upload.wikimedia.org/wikipedia/commons/thumb/d/d9/F1_green_flag.svg/42px-F1_green_flag.svg.png",
+        "description": "Ism\u00e9t szabad el\u0151zni."
+      },
+      {
+        "flag_image": "https:////upload.wikimedia.org/wikipedia/commons/thumb/a/a3/F1_yellow_flag_with_red_stripes.svg/42px-F1_yellow_flag_with_red_stripes.svg.png",
+        "description": "Cs\u00fasz\u00f3s a p\u00e1lya (olaj, es\u0151). A z\u00e1szl\u00f3t 3 k\u00f6r\u00f6n \u00e1t lengetik."
+      },
+      {
+        "flag_image": "https:////upload.wikimedia.org/wikipedia/commons/thumb/9/90/F1_black_and_white_diagonal_flag.svg/42px-F1_black_and_white_diagonal_flag.svg.png",
+        "description": "Egy versenyz\u0151t a sportszer\u0171tlen magatart\u00e1s\u00e1\u00e9rt egyszeri alkalommal figyelmeztetnek. Ezen a z\u00e1szl\u00f3n is szerepel az \u00e9rintett aut\u00f3 rajtsz\u00e1ma."
+      }
+    ]
+  }
+]
