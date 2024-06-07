@@ -1,3 +1,5 @@
+import sys
+
 import requests
 import os
 import json
@@ -5,16 +7,13 @@ import re
 import PIL
 from PIL import Image
 from bs4 import BeautifulSoup
-from io import BytesIO
+import io
 
 # parse by link
 
 def parse_by_link(link):
     html = requests.get(link)
     return html
-
-def parse_active_drivers_with_number(table):
-    return 0
 
 link = 'https://hu.wikipedia.org/wiki/Formula%E2%80%931'
 html = parse_by_link(link)
@@ -45,21 +44,56 @@ filtered_td = race_number_table.find_all('td')
 filtered_td = [td for td in filtered_td if not td.find('img')]
 # print(filtered_td)
 drivers = []
+driver = []
+current_race_number = 0
+current_driver_wiki = ""
 for td in filtered_td:
-    driver = []
-    print(td.contents)
+    #print(td.contents)
     line = td.contents[0]
-    print(line)
+    #print(line)
 
     if td.find('a'):
-        driver.append('https:' + line['href'])
+        print('https://hu.wikipedia.org/' + td.find('a')['href'])
+        current_driver_wiki = 'https://hu.wikipedia.org/' + td.find('a')['href']
+        #driver.append('https:' + line['href'])
     else:
+        line = line.strip()
         if line.isnumeric() and int(line) < 100:
-            driver.append(line)
-        elif '-' in line:
-            line = line.strip()
-            driver.append(line)
-    print(driver)
+            current_race_number = int(line)
+        elif line.endswith('–'):
+            years = line
+            print(line)
+            print("End of driver")
+            driver = [current_race_number, current_driver_wiki, years]
+            drivers.append(driver)
+
+print(drivers)
+print(len(drivers))
+new_drivers = []
+for driver in drivers:
+    html = parse_by_link(driver[1])
+    soup = BeautifulSoup(html.text, 'html.parser')
+    table = soup.find_all('table', class_='infobox ujinfobox')
+    driver_name = driver[1].split('/')[-1].split('_')
+    driver_name = ' '.join(driver_name)
+    print(driver_name)
+    #print(table)
+    tr = table[0].find_all('tr')
+    team = ""
+    for t in tr:
+        td = t.find_all('td')
+        if len(td) == 2 and td[0].text == 'Csapata':
+            team_text = td[1].text
+            team = team_text[:team_text.find('(')]
+            print(team)
+
+    new_driver = [driver_name, driver[0], team]
+    new_drivers.append(new_driver)
+
+print(new_drivers)
+
+
+
 
 data = []
 for td in filtered_td:
@@ -174,51 +208,60 @@ if not os.path.exists(flags_path):
 
 counter = 1
 
-# for img in identified_images:
-#     path = os.path.abspath(identified_path) + '\identified_image' + str(counter) + '.jpg'
-#     img_url = 'https:' + img['src']
-#     img_data = requests.get(img_url).content
-#     with open(path, 'wb') as handler:
-#         handler.write(img_data)
-#         counter += 1
-#
-# counter = 1
-# for img in flags_images:
-#     path = os.path.abspath(flags_path) + '\\flag_image' + str(counter) + '.jpg'
-#     img_url = 'https:' + img
-#     img_data = requests.get(img_url).content
-#     with open(path, 'wb') as handler:
-#         handler.write(img_data)
-#         counter += 1
-#
-# counter = 1
-# for img in unidentified_images:
-#     extension = img['src'][-4:]
-#     if not extension.startswith('.'):
-#         continue
-#     path = os.path.abspath(unidentified_path) + '\\unidentified_image' + str(counter) + img['src'][-4:]
-#     if bool(re.match(r'^/[A-Za-z]', img['src'])):
-#         img_url = 'https://hu.wikipedia.org' + img['src']
-#     elif bool(re.match(r'^//', img['src'])):
-#         img_url = 'https:' + img['src']
-#     else:
-#         img_url = img['src']
-#     print(img['src'])
-#     print(img_url)
-#     img_data = requests.get(img_url).content
-#     with open(path, 'wb') as handler:
-#         handler.write(img_data)
-#         counter += 1
+for img in identified_images:
+    path = os.path.abspath(identified_path) + '\identified_image' + str(counter) + '.jpg'
+    img_url = 'https:' + img['src']
+    img_data = requests.get(img_url).content
+    with open(path, 'wb') as handler:
+        handler.write(img_data)
+        counter += 1
+
+counter = 1
+for img in flags_images:
+    path = os.path.abspath(flags_path) + '\\flag_image' + str(counter) + '.jpg'
+    img_url = 'https:' + img
+    img_data = requests.get(img_url).content
+    with open(path, 'wb') as handler:
+        handler.write(img_data)
+        counter += 1
+
+counter = 1
+for img in unidentified_images:
+    extension = img['src'][-4:]
+    if not extension.startswith('.'):
+        continue
+    path = os.path.abspath(unidentified_path) + '\\unidentified_image' + str(counter) + img['src'][-4:]
+    if bool(re.match(r'^/[A-Za-z]', img['src'])):
+        img_url = 'https://hu.wikipedia.org' + img['src']
+    elif bool(re.match(r'^//', img['src'])):
+        img_url = 'https:' + img['src']
+    else:
+        img_url = img['src']
+    print(img['src'])
+    print(img_url)
+    img_data = requests.get(img_url).content
+    with open(path, 'wb') as handler:
+        handler.write(img_data)
+        counter += 1
 
 # -----------------------------
 # JSON export
 # -----------------------------
 full_json = []
 driver_json = []
+image_json = []
+flags_json = []
+
+for driver in new_drivers:
+    driver_json.append({'driver_name': driver[0],
+                        'driver_number': driver[1],
+                        'driver_team': driver[2]})
+
+full_json.append({'drivers': driver_json})
 
 def get_image_size(url):
-    response = requests.get(url)
-    image_res = PIL.Image.open(BytesIO(response.content))
+    response = requests.get(url, stream=True)
+    image_res = Image.open(io.BytesIO(response.content))
     return image_res.size
 
 def get_svg_size(url):
@@ -237,11 +280,11 @@ def get_svg_size(url):
 
     return (width, height)
 
-image_json = []
+
 size_of_all_images = 0
 highest_res = (0, '0x0')
 lowest_res = (100000000, '10000x10000')
-print(all_images)
+# print(all_images)
 for img in all_images:
     if bool(re.match(r'^/[A-Za-z]', img['src'])):
         img_url = 'https://hu.wikipedia.org' + img['src']
@@ -250,18 +293,19 @@ for img in all_images:
     else:
         img_url = img['src']
 
-    print(img_url)
+    # print(img_url)
     extension = img['src'][-4:]
     if not extension.startswith('.'):
         continue
     if extension == '.svg':
         img_res = get_svg_size(img_url)
     elif extension.lower() == '.jpg' or extension.lower() == '.png':
+        print(img_url)
         img_res = get_image_size(img_url)
     else:
         img_res = (0, 0)
 
-    print(img_res)
+    # print(img_res)
     size_of_all_images += int(img_res[0]) * int(img_res[1])
     if int(img_res[0]) * int(img_res[1]) > highest_res[0]:
         highest_res = (int(img_res[0]) * int(img_res[1]), str(img_res[0]) + 'x' + str(img_res[1]))
@@ -277,7 +321,7 @@ for img in all_images:
 
 full_json.append({'images': image_json})
 
-flags_json = []
+
 for flag in flags:
     flags_json.append({'flag_image': 'https://' + flag[0], 'description': flag[1]})
 
@@ -290,13 +334,27 @@ with open('data.json', 'w') as file:
 # -----------------------------
 # Statistics
 # -----------------------------
-print("\nStatistics")
-print("Number of drivers in the championship:   " + str(len(active_racists)))
-print("Number of engine manufacturers:          " + str(len(manufacturers)))
-print("Number of images:                        " + str(len(all_images)))
-print("Number of identified images:             " + str(len(identified_images)))
-print("Number of unidentified images:           " + str(len(unidentified_images)))
-print("Size of all images:                      " + str(size_of_all_images) + " pixels")
-print("Average size of images:                  " + str(round(size_of_all_images / len(all_images), 0)) + " pixels")
-print("Highest resolution image:                " + highest_res[1])
-print("Lowest resolution image:                 " + lowest_res[1])
+# print("\nStatistics")
+# print("Number of drivers in the championship:   " + str(len(active_racists)))
+# print("Number of engine manufacturers:          " + str(len(manufacturers)))
+# print("Number of images:                        " + str(len(all_images)))
+# print("Number of identified images:             " + str(len(identified_images)))
+# print("Number of unidentified images:           " + str(len(unidentified_images)))
+# print("Size of all images:                      " + str(size_of_all_images) + " pixels")
+# print("Average size of images:                  " + str(round(size_of_all_images / len(all_images), 0)) + " pixels")
+# print("Highest resolution image:                " + highest_res[1])
+# print("Lowest resolution image:                 " + lowest_res[1])
+
+print(os.name)
+print(os.getcwd())
+print(os.getlogin())
+print(sys.platform)
+statistics = [str(len(active_racists)),
+              str(len(manufacturers)),
+              str(len(all_images)),
+              str(len(identified_images)),
+              str(len(unidentified_images)),
+              str(size_of_all_images) + " pixels",
+              str(round(size_of_all_images / len(all_images), 0)) + " pixels",
+              highest_res[1],
+              lowest_res[1]]
