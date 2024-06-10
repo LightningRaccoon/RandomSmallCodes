@@ -4,5 +4,5 @@
 /Wiki parsing/src/identified/*
 /Wiki parsing/src/unidentified/*
 /Wiki parsing/src/*.json
-/Wiki parsing/src/*.txt
+/Wiki parsing/src/statistics.txt
 .idea/*
