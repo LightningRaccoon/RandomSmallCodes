@@ -10,6 +10,7 @@ struct Point{
 bool test_1();
 bool test_2();
 bool test_3();
+bool test_4();
 
 double calculateDistance(Point a, Point b){
     return sqrt(pow(a.x - b.x, 2) + pow(a.y - b.y, 2) + pow(a.z - b.z, 2));
@@ -19,7 +20,6 @@ double calculateShortestPath(Point* pointArray, int size){
     double shortestDistance = 0;
     for (int i = 0; i < size-1; ++i){
         double distance = calculateDistance(pointArray[i], pointArray[i+1]);
-        std::cout << distance << std::endl;
         if (shortestDistance > distance || shortestDistance == 0){
             shortestDistance = distance;
         }
@@ -47,6 +47,12 @@ int main(){
         std::cout << "Test 3 is NOT OK" << std::endl;
     }
 
+    if (test_4()){
+        std::cout << "Test 4 is OK" << std::endl;
+    } else {
+        std::cout << "Test 4 is NOT OK" << std::endl;
+    }
+
     return 0;
 }
 
@@ -60,8 +66,10 @@ bool test_1(){
 
     Point pointArray[11] = {a, b, c, d, e};
     double result = calculateShortestPath(pointArray, 5);
-    std::cout << result << std::endl;
-    return result == 1.732051;
+    double expected = calculateDistance(a, b);
+    std::cout << "Test_1 result: " << result << std::endl;
+
+    return result == expected;
 }
 
 bool test_2(){
@@ -69,39 +77,46 @@ bool test_2(){
     Point b = {1, 3, 5};
     Point c = {4, 5, 8};
     Point d = {9, 7, 12};
-    Point e = {16, 9, 15};
+    Point e = {9, 8, 13};
 
 
     Point pointArray[5] = {a, b, c, d, e};
     double result = calculateShortestPath(pointArray, 5);
-    std::cout << result << std::endl;
-    return result == sqrt(3);
+    double expected = calculateDistance(d, e);
+    std::cout << "Test_2 result: " << result << std::endl;
+
+    return result == expected;
 }
 
 bool test_3(){
     Point a = {0, 1, 0};
     Point b = {3, 4, -1};
     Point c = {6, 9, -2};
-    Point d = {9, 16, -3};
+    Point d = {6, 10, -2.5};
     Point e = {12, 25, -4};
 
 
 
     Point pointArray[5] = {a, b, c, d, e};
     double result = calculateShortestPath(pointArray, 5);
-    std::cout << result << std::endl;
-    return result == sqrt(3);
+    double expected = calculateDistance(c, d);
+    std::cout << "Test_3 result: " << result << std::endl;
+
+    return result == expected;
 }
 
 bool test_4(){
-    Point a = {0, 0, 0};
-    Point b = {0.1, 1.5, -1.67};
-    Point c = {0.01, 3, -3.34};
-    Point d = {0.0001, 4.5, -5.01};
-    Point e = {0.00000001, 6, -6.68};
+    Point a = {0, -1, 20};
+    Point b = {1, -2, 10};
+    Point c = {2, -4, 5};
+    Point d = {3, -8, 2.5};
+    Point e = {4, -16, 1.75};
+
 
     Point pointArray[5] = {a, b, c, d, e};
     double result = calculateShortestPath(pointArray, 5);
-    std::cout << result << std::endl;
-    return result == sqrt(3);
+    double expected = calculateDistance(c, d);
+    std::cout << "Test_4 result: " << result << std::endl;
+
+    return result == expected;
 }
