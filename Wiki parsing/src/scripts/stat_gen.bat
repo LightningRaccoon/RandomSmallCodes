@@ -1,7 +1,5 @@
 @echo off
 
-echo Generating statistics...
-
 :: Checking if there is at least 9 arguments
 if "%~9"=="" (
     echo "No 9th argument"

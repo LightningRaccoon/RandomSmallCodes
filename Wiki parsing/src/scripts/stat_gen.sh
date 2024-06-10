@@ -1,7 +1,5 @@
 #!/bin/bash
 
-echo "Generating statistics..."
-
 # Check if there are at least 9 arguments
 if [ -z "$9" ]; then
     echo "No 9th argument"
